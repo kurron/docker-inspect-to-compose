@@ -88,19 +88,29 @@ ${name}:
 #       syslog-address: udp://localhost:1234
         syslog-facility: daemon
         syslog-tag: "${name}"
-
 """
+            def yamlBuilder = new StringBuilder( yaml )
             if ( it['port-mappings'] ) {
                 def mappings = it['port-mappings'].collect { key, value ->
                     // not sure what this isn't working right so go old school
-                    new StringBuilder().append( '- "' ).append( key ).append( ':' ).append( value ).append( '"' ).toString()
+                    new StringBuilder().append( '- "' ).append( key ).append( ':' ).append( value ).append( '" ' ).toString()
                 }
                 def ports = 'ports: '
-                mappings.each { mapping ->
-                    ports += mapping
-                } // we'll clean it up by hand during the review of the file
-                yaml + ports
+                mappings.each { mapping -> ports += mapping } // we'll clean it up by hand during the review of the file
+                yamlBuilder.append( ports ).append( System.getProperty( 'line.separator' ) )
             }
+
+            if ( it['mount-points'] ) {
+                def mounts = it['mount-points'].collect { key, value ->
+                    // not sure what this isn't working right so go old school
+                    new StringBuilder().append( '- ' ).append( key ).append( ':' ).append( value ).append( ' ' ).toString()
+                }
+                def volumes = 'volumes: '
+                mounts.each { mapping -> volumes += mapping } // we'll clean it up by hand during the review of the file
+                yamlBuilder.append( volumes ).append( System.getProperty( 'line.separator' ) )
+            }
+
+            yamlBuilder.toString()
         }
 
 
