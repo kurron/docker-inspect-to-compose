@@ -76,18 +76,13 @@ class RestInboundGatewayIntegrationTest extends Specification implements Generat
         and: 'the expected fields are present'
         def json = new JsonSlurper().parseText( response.body ) as List
         def compose = json.collect {
-            def portMappings = it['port-mappints'].collect { key, value ->
-                '- "${key}:${value}"'
-            }
             def name = it['name'].substring( 1 )
+            def yaml =
 """
 ${name}:
     image: ${it['image']}
     restart: always
     net: bridged
-    ports:
-        - "8000:8000"
-
     log_driver: "syslog"
     log_opt:
 #       syslog-address: udp://localhost:1234
@@ -95,7 +90,20 @@ ${name}:
         syslog-tag: "${name}"
 
 """
+            if ( it['port-mappings'] ) {
+                def mappings = it['port-mappings'].collect { key, value ->
+                    // not sure what this isn't working right so go old school
+                    new StringBuilder().append( '- "' ).append( key ).append( ':' ).append( value ).append( '"' ).toString()
+                }
+                def ports = 'ports: '
+                mappings.each { mapping ->
+                    ports += mapping
+                } // we'll clean it up by hand during the review of the file
+                yaml + ports
+            }
         }
+
+
         def file = new File( 'docker-compose-example.yml' )
         file.withWriter('UTF-8') { writer ->
             compose.each { line ->
