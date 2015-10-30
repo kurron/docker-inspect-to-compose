@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.kurron:tools-groovy:1.0.0.RELEASE">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.kurron/tools-groovy/1.0.0.RELEASE/b567c456c94db80bdb43c35f0ce081057a6ae83a/tools-groovy-1.0.0.RELEASE.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.kurron/tools-groovy/1.0.0.RELEASE/15045d65384e110d4de81efbfed956ddffe26fda/tools-groovy-1.0.0.RELEASE-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

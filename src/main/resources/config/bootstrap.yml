@@ -1,0 +1,7 @@
+spring:
+    application:
+        name: rest-example
+    cloud:
+        config:
+            enabled: false
+            failFast: true

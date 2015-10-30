@@ -1,0 +1,14 @@
+[
+  {
+    "mongodb": "fast"
+  },
+  {
+    "redis": "fast"
+  },
+  {
+    "mysql": "fast"
+  },
+  {
+    "postgresql": "fast"
+  }
+]

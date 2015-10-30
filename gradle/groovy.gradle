@@ -1,0 +1,106 @@
+/*
+ * Copyright (c) 2015. Ronald D. Kurr kurr@jvmguy.com
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+apply plugin: 'groovy'
+
+compileGroovy {
+    groovyOptions.configurationScript = file( "$rootDir/gradle/groovyCompilerConfiguration.groovy" )
+}
+
+compileGroovy.groovyOptions.optimizationOptions['indy'] = true
+compileTestGroovy.groovyOptions.optimizationOptions['indy'] = true
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+compileGroovy.options*.compilerArgs = ['-Xlint:deprecation','-encoding', 'UTF-8']
+compileTestGroovy.options*.compilerArgs = ['-Xlint:deprecation','-encoding', 'UTF-8']
+
+ext.sharedManifest = manifest {
+    attributes( 'Implementation-Title': project.name, 'Implementation-Version': project.version )
+}
+
+jar {
+    manifest = project.manifest {
+        from sharedManifest
+    }
+
+    from( buildDir ) {
+        include 'build-info.properties'
+    }
+}
+
+jar.dependsOn 'createBuildInformationFile'
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+    manifest = project.manifest {
+        from sharedManifest
+    }
+}
+
+task testSourcesJar(type: Jar, dependsOn: testClasses) {
+    classifier = 'test-sources'
+    from sourceSets.test.allSource
+    manifest = project.manifest {
+        from sharedManifest
+    }
+}
+
+task testBinariesJar(type: Jar, dependsOn: testClasses) {
+    classifier = 'test'
+    from sourceSets.test.output
+    manifest = project.manifest {
+        from sharedManifest
+    }
+}
+
+task groovydocJar(type: Jar, dependsOn: groovydoc) {
+    classifier = 'groovydoc'
+    from project.docsDir.path + '/groovydoc'
+    manifest = project.manifest {
+        from sharedManifest
+    }
+}
+
+artifacts {
+    archives sourcesJar
+    archives testSourcesJar
+    archives testBinariesJar
+    archives groovydocJar
+}
+
+groovydoc {
+    docTitle = "docTitle: $project.name $version"
+    footer = "footer: $project.name $version"
+    header = "header: $project.name $version"
+    windowTitle = "windowTitle: $project.name $version"
+    includePrivate = false
+    overview = 'overview.html'
+    use = true
+}
+
+test {
+    useJUnit {
+        includeCategories 'org.kurron.categories.UnitTest'
+    }
+    testLogging {
+        showStandardStreams = false
+        exceptionFormat = 'full'
+    }
+    reports.html.destination =  "$buildDir/reports/unitTests"
+}
+
