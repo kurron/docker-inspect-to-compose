@@ -85,7 +85,6 @@ ${name}:
     net: bridged
     log_driver: "syslog"
     log_opt:
-#       syslog-address: udp://localhost:1234
         syslog-facility: daemon
         syslog-tag: "${name}"
 """
