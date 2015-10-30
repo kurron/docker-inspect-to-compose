@@ -55,19 +55,12 @@ defaultTasks << 'clean'
 defaultTasks << 'build'
 
 if ( 'true' == runIntegrationTests ) {
-    defaultTasks += ['outboundIntegrationTests', 'inboundIntegrationTests', 'acceptanceTests','updateJarWithApiDocumentation']
-    // make sure we deploy the docker container before running integration/acceptance tests
-    [acceptanceTests]*.dependsOn runDockerContainer
-    // make sure the docker image is cleaned up
-    [acceptanceTests]*.finalizedBy deleteDockerImage
+    defaultTasks += ['outboundIntegrationTests', 'inboundIntegrationTests']
 }
 
 // only publish artifacts if publishArtifacts is true, and the branch is either master or development
 if ( 'true' == publishArtifacts && branch in ['master', 'development'] ) {
     defaultTasks << 'publish'
-    defaultTasks << 'publishDockerImage'
-    // ensures that deleteDockerImage will not be executed until we publish, unless a failure occurs prior to publishing
-    publishDockerImage.finalizedBy deleteDockerImage
 }
 else {
     defaultTasks << 'publishToMavenLocal'
