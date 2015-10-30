@@ -26,10 +26,7 @@ import org.kurron.feedback.AbstractFeedbackAware
 import org.kurron.stereotype.InboundRestGateway
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.actuate.metrics.CounterService
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -85,6 +82,11 @@ class RestInboundGateway extends AbstractFeedbackAware {
         // 03 - for each container, inspect them
 
         def parsed = new JsonSlurper().parseText( request )
+        def dockerURI = parsed['docker-uri'] as String
+        def containers = obtainContainerIDs( dockerURI )
+        def containerInfo = containers.collect {
+            inspectContainer( dockerURI, it )
+        }
         def results = parsed.collect { Map<String,String> serviceActions ->
             def service = serviceActions.entrySet().first().key
             def action = serviceActions.entrySet().first().value
@@ -97,27 +99,28 @@ class RestInboundGateway extends AbstractFeedbackAware {
         new ResponseEntity<String>( builder.toPrettyString(), downStreamStatus )
     }
 
-    HttpStatus callService( String service, String action, String correlationID ) {
-        def builder = new JsonBuilder( ['command': action] )
-        def command = builder.toPrettyString()
+    List<String> obtainContainerIDs( String dockerURI ) {
 
-        def headers = new HttpHeaders()
-        headers.setContentType( MediaType.APPLICATION_JSON )
-        headers.set( 'X-Correlation-Id', correlationID )
-
-        HttpStatus status
-        try {
-            HttpEntity<String> requestEntity = new HttpEntity<>( command, headers )
-            ResponseEntity<Void> response = theTemplate.postForEntity( toEndPoint( service ), requestEntity, Void )
-            status = response.statusCode
-        }
-        catch( Exception ignored ) {
-            status = HttpStatus.BAD_GATEWAY
-        }
-        status
+        def serviceURI = UriComponentsBuilder.fromHttpUrl( dockerURI ).path( '/containers/json' ).query( 'all=1' ) .build().toUri()
+        ResponseEntity<String> response = theTemplate.getForEntity( serviceURI, String )
+        def parsed = new JsonSlurper().parseText( response.body )
+        parsed.collect { it['Id'] as String }
     }
 
-    private URI toEndPoint( String service ) {
-        serviceToUriMap[(service)] ?: serviceToUriMap['mongodb']
+    Map<String,String> inspectContainer( String dockerURI, String containerID ) {
+
+        def serviceURI = UriComponentsBuilder.fromHttpUrl( dockerURI ).path( '/containers/{containerID}/json' ).query( 'all=1' ) .buildAndExpand( containerID ).toUri()
+        ResponseEntity<String> response = theTemplate.getForEntity( serviceURI, String )
+        def parsed = new JsonSlurper().parseText( response.body )
+        Map<String,String> interesting = [:]
+        interesting['name'] = parsed['Name'] as String
+        interesting['image'] = parsed['Config']['Image'] as String
+        interesting['networking'] = parsed['HostConfig']['NetworkMode'] as String
+        def portKeys = parsed['Config']['ExposedPorts'].collect { key, value -> key }
+        interesting['mappings'] = portKeys.collectEntries {
+            def port = parsed['HostConfig']['PortBindings'][it] ? parsed['HostConfig']['PortBindings'][it]['HostPort'].first() : '-'
+            [(it): port]
+        }
+        interesting
     }
 }

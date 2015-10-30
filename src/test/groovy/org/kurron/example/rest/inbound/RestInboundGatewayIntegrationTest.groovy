@@ -48,7 +48,7 @@ class RestInboundGatewayIntegrationTest extends Specification implements Generat
     @Value( '${local.server.port}' )
     int port
 
-    def requestPayload = ['docker-uri': UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( 2375 ).path( '/' ).build().toUri().toString()]
+    def requestPayload = ['docker-uri': UriComponentsBuilder.newInstance().scheme( 'http' ).host( '192.168.255.18' ).port( 2375 ).path( '/' ).build().toUri().toString()]
 
     def 'exercise happy path'() {
 
