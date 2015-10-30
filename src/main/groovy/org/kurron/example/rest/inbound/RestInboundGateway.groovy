@@ -87,16 +87,9 @@ class RestInboundGateway extends AbstractFeedbackAware {
         def containerInfo = containers.collect {
             inspectContainer( dockerURI, it )
         }
-        def results = parsed.collect { Map<String,String> serviceActions ->
-            def service = serviceActions.entrySet().first().key
-            def action = serviceActions.entrySet().first().value
-            def status = callService( service, action, loggingID )
-            [service: service, command: action, status: status]
-        }
-        def builder = new JsonBuilder( results )
-        def resultingStatus = results.collect { entry -> entry['status'] } as List<HttpStatus>
-        def downStreamStatus = resultingStatus.every { HttpStatus status -> status.is2xxSuccessful() } ? HttpStatus.OK : HttpStatus.BAD_GATEWAY
-        new ResponseEntity<String>( builder.toPrettyString(), downStreamStatus )
+
+        def builder = new JsonBuilder( containerInfo )
+        new ResponseEntity<String>( builder.toPrettyString(), HttpStatus.OK )
     }
 
     List<String> obtainContainerIDs( String dockerURI ) {
@@ -119,6 +112,7 @@ class RestInboundGateway extends AbstractFeedbackAware {
         def portKeys = parsed['Config']['ExposedPorts'].collect { key, value -> key }
         interesting['port-mappings'] = portKeys.collectEntries {
             def port = parsed['HostConfig']['PortBindings'][it] ? parsed['HostConfig']['PortBindings'][it]['HostPort'].first() : '-'
+            // creates a mapping between from the container to the host side
             [(it): port]
         }
         interesting['mount-points'] = parsed['Mounts'].collectEntries {

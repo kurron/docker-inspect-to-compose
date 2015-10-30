@@ -75,6 +75,32 @@ class RestInboundGatewayIntegrationTest extends Specification implements Generat
 
         and: 'the expected fields are present'
         def json = new JsonSlurper().parseText( response.body ) as List
-        def alive = json.collect { Map it -> it['service'] }
+        def compose = json.collect {
+            def portMappings = it['port-mappints'].collect { key, value ->
+                '- "${key}:${value}"'
+            }
+"""
+${it['name']}:
+    image: ${it['image']}
+    restart: always
+    net: bridged
+    ports:
+        - "8000:8000"
+
+    log_driver: "syslog"
+    log_opt:
+#       syslog-address: udp://localhost:1234
+        syslog-facility: daemon
+        syslog-tag: "${it['name']}"
+
+"""
+        }
+        def file = new File( 'docker-compose-example.yml' )
+        file.withWriter('UTF-8') { writer ->
+            compose.each { line ->
+                writer.write( line )
+            }
+        }
+        true
     }
 }
