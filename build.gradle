@@ -47,7 +47,6 @@ apply from: "$rootDir/gradle/bintray.gradle"
 
 dependencies {
     compile "org.codehaus.groovy:groovy-all:${groovyVersion}:indy"
-//  compile "org.codehaus.gpars:gpars:${gparsVersion}"
     compile "org.kurron:tools-groovy:${toolsGroovyVersion}"
     runtime "net.logstash.logback:logstash-logback-encoder:${logstashLogbackVersion}"
 }
