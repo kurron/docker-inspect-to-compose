@@ -15,7 +15,6 @@
  */
 package org.kurron.example.rest.inbound
 
-import static java.nio.charset.StandardCharsets.UTF_8
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import static org.springframework.web.bind.annotation.RequestMethod.POST
 import groovy.json.JsonBuilder
@@ -25,12 +24,6 @@ import org.kurron.example.rest.ApplicationProperties
 import org.kurron.example.rest.feedback.ExampleFeedbackContext
 import org.kurron.feedback.AbstractFeedbackAware
 import org.kurron.stereotype.InboundRestGateway
-import org.springframework.amqp.core.Message
-import org.springframework.amqp.core.MessageBuilder
-import org.springframework.amqp.core.MessageDeliveryMode
-import org.springframework.amqp.core.MessageProperties
-import org.springframework.amqp.core.MessagePropertiesBuilder
-import org.springframework.amqp.rabbit.core.RabbitOperations
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.actuate.metrics.CounterService
 import org.springframework.http.HttpEntity
@@ -67,11 +60,6 @@ class RestInboundGateway extends AbstractFeedbackAware {
     private final RestOperations theTemplate
 
     /**
-     * Handles RabbitMQ interactions.
-     **/
-    private final RabbitOperations rabbitTemplate
-
-    /**
      * Mapping of service names to their service endpoints
      **/
     private final Map<String,URI> serviceToUriMap = [default: UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'google.com' ).path( '/' ).build().toUri()]
@@ -79,12 +67,10 @@ class RestInboundGateway extends AbstractFeedbackAware {
     @Autowired
     RestInboundGateway( final ApplicationProperties aConfiguration,
                         final CounterService aCounterService,
-                        final RestOperations aTemplate,
-                        final RabbitOperations aRabbitTemplate ) {
+                        final RestOperations aTemplate ) {
         configuration = aConfiguration
         counterService = aCounterService
         theTemplate = aTemplate
-        rabbitTemplate = aRabbitTemplate
     }
 
     @RequestMapping( method = POST, consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE] )
@@ -103,7 +89,6 @@ class RestInboundGateway extends AbstractFeedbackAware {
             def service = serviceActions.entrySet().first().key
             def action = serviceActions.entrySet().first().value
             def status = callService( service, action, loggingID )
-            rabbitTemplate.send( newMessage( action, loggingID ) )
             [service: service, command: action, status: status]
         }
         def builder = new JsonBuilder( results )
@@ -134,23 +119,5 @@ class RestInboundGateway extends AbstractFeedbackAware {
 
     private URI toEndPoint( String service ) {
         serviceToUriMap[(service)] ?: serviceToUriMap['mongodb']
-    }
-
-
-    private static MessageProperties newProperties( String correlationID ) {
-        MessagePropertiesBuilder.newInstance().setAppId( 'monitor-api-gateway' )
-                .setContentType( 'text/plain' )
-                .setMessageId( UUID.randomUUID().toString() )
-                .setDeliveryMode( MessageDeliveryMode.NON_PERSISTENT )
-                .setTimestamp( Calendar.instance.time )
-                .setCorrelationId( correlationID.getBytes( UTF_8  ) )
-                .build()
-    }
-
-    private static Message newMessage( String request, String correlationID ) {
-        def properties = newProperties( correlationID )
-        MessageBuilder.withBody( request.getBytes( UTF_8  ) )
-                      .andProperties( properties )
-                      .build()
     }
 }

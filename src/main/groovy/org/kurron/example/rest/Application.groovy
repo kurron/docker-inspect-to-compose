@@ -21,9 +21,6 @@ import org.kurron.example.rest.health.MySqlServiceHealthCheck
 import org.kurron.example.rest.health.PostgreSqlServiceHealthCheck
 import org.kurron.example.rest.health.RedisServiceHealthCheck
 import org.kurron.feedback.FeedbackAwareBeanPostProcessor
-import org.springframework.amqp.core.DirectExchange
-import org.springframework.amqp.rabbit.connection.ConnectionFactory
-import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -86,18 +83,6 @@ class Application {
         def bean = new RestTemplate()
         bean.errorHandler = errorHandler
         bean
-    }
-
-    @Bean
-    RabbitTemplate rabbitTemplate( ApplicationProperties configuration, ConnectionFactory factory  ) {
-        def bean = new RabbitTemplate( factory )
-        bean.exchange = configuration.exchange
-        bean
-    }
-
-    @Bean
-    DirectExchange exchange( ApplicationProperties configuration ) {
-        new DirectExchange( configuration.exchange )
     }
 
     @Bean
