@@ -104,12 +104,11 @@ ${name}:
                     // not sure what this isn't working right so go old school
                     new StringBuilder().append( '- ' ).append( key ).append( ':' ).append( value ).append( ' ' ).toString()
                 }
-                def volumes = 'volumes: '
-                mounts.each { mapping -> volumes += mapping } // we'll clean it up by hand during the review of the file
-                yamlBuilder.append( volumes ).append( System.getProperty( 'line.separator' ) )
+                yamlBuilder.append( '    volumes: ' ).append( System.getProperty( 'line.separator' ) )
+                mounts.each { mapping -> yamlBuilder.append( '        ' ).append( mapping ).append( System.getProperty( 'line.separator' ) ) }
             }
 
-            yamlBuilder.toString()
+            yamlBuilder.append( System.getProperty( 'line.separator' ) ).toString()
         }
 
 
