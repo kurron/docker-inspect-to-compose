@@ -119,6 +119,7 @@ class RestInboundGateway extends AbstractFeedbackAware {
             // creates a mapping from container side to host side
             [(it['Destination']): it['Source']]
         }
+        interesting['environment'] = parsed['Config']['Env']
 
         interesting
     }

@@ -107,6 +107,11 @@ ${name}:
                 mounts.each { mapping -> yamlBuilder.append( '        ' ).append( mapping ).append( System.getProperty( 'line.separator' ) ) }
             }
 
+            if ( it['environment'] ) {
+                yamlBuilder.append( '    environment: ' ).append( System.getProperty( 'line.separator' ) )
+                it['environment'].each { mapping -> yamlBuilder.append( '        - ' ).append( mapping ).append( System.getProperty( 'line.separator' ) ) }
+            }
+
             yamlBuilder.append( System.getProperty( 'line.separator' ) ).toString()
         }
 
