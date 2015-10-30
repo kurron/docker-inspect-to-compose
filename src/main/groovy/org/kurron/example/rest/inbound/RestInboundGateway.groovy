@@ -85,10 +85,6 @@ class RestInboundGateway extends AbstractFeedbackAware {
         counterService = aCounterService
         theTemplate = aTemplate
         rabbitTemplate = aRabbitTemplate
-        serviceToUriMap['mongodb'] = UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( configuration.mongodbServicePort ).path( '/' ).build().toUri()
-        serviceToUriMap['redis'] = UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( configuration.redisServicePort ).path( '/' ).build().toUri()
-        serviceToUriMap['mysql'] = UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( configuration.mySqlServicePort ).path( '/' ).build().toUri()
-        serviceToUriMap['postgresql'] = UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( configuration.postgreSqlServicePort ).path( '/' ).build().toUri()
     }
 
     @RequestMapping( method = POST, consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE] )
@@ -97,6 +93,10 @@ class RestInboundGateway extends AbstractFeedbackAware {
 
         def loggingID = correlationID.orElse( Integer.toHexString( ThreadLocalRandom.newInstance().nextInt( 0, Integer.MAX_VALUE ) ) )
         feedbackProvider.sendFeedback( ExampleFeedbackContext.PROCESSING_REQUEST, loggingID )
+
+        // 01 - list all containers -- running and not
+        // 02 - extract the container ids
+        // 03 - for each container, inspect them
 
         def parsed = new JsonSlurper().parseText( request )
         def results = parsed.collect { Map<String,String> serviceActions ->

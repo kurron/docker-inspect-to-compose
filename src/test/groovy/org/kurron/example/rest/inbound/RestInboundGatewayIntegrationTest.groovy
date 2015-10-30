@@ -48,10 +48,7 @@ class RestInboundGatewayIntegrationTest extends Specification implements Generat
     @Value( '${local.server.port}' )
     int port
 
-    def possibleCommands = ['fast', 'normal', 'slow', 'dead']
-//  def services = ['gateway', 'mongodb', 'redis', 'mysql', 'postgresql', 'rabbitmq']
-    def services = ['mongodb', 'redis', 'mysql', 'postgresql']
-    def expectations = services.collect { [(it): randomElement(possibleCommands)] }
+    def requestPayload = ['docker-uri': UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( 2375 ).path( '/' ).build().toUri().toString()]
 
     def 'exercise happy path'() {
 
@@ -59,15 +56,15 @@ class RestInboundGatewayIntegrationTest extends Specification implements Generat
         assert theTemplate
         assert port
 
-        def builder = new JsonBuilder( expectations )
-        def command = builder.toPrettyString()
+        def builder = new JsonBuilder( requestPayload )
+        def payload = builder.toPrettyString()
 
         and: 'the POST request is made'
         def uri = UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( port ).path( '/' ).build().toUri()
         def headers = new HttpHeaders()
         headers.setContentType( MediaType.APPLICATION_JSON )
         headers.add( 'X-Correlation-Id', randomHexString() )
-        HttpEntity<String> request = new HttpEntity<>( command, headers )
+        HttpEntity<String> request = new HttpEntity<>( payload, headers )
         Future<ResponseEntity<String>> future = theTemplate.postForEntity( uri, request, String )
 
         when: 'the answer comes back'
@@ -79,6 +76,5 @@ class RestInboundGatewayIntegrationTest extends Specification implements Generat
         and: 'the expected fields are present'
         def json = new JsonSlurper().parseText( response.body ) as List
         def alive = json.collect { Map it -> it['service'] }
-        services.every { it in alive } // silly but for now just make sure that each service responded
     }
 }
