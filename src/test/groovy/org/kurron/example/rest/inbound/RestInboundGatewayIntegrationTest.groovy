@@ -79,8 +79,9 @@ class RestInboundGatewayIntegrationTest extends Specification implements Generat
             def portMappings = it['port-mappints'].collect { key, value ->
                 '- "${key}:${value}"'
             }
+            def name = it['name'].substring( 1 )
 """
-${it['name']}:
+${name}:
     image: ${it['image']}
     restart: always
     net: bridged
@@ -91,7 +92,7 @@ ${it['name']}:
     log_opt:
 #       syslog-address: udp://localhost:1234
         syslog-facility: daemon
-        syslog-tag: "${it['name']}"
+        syslog-tag: "${name}"
 
 """
         }
