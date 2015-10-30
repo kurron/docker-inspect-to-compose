@@ -117,10 +117,15 @@ class RestInboundGateway extends AbstractFeedbackAware {
         interesting['image'] = parsed['Config']['Image'] as String
         interesting['networking'] = parsed['HostConfig']['NetworkMode'] as String
         def portKeys = parsed['Config']['ExposedPorts'].collect { key, value -> key }
-        interesting['mappings'] = portKeys.collectEntries {
+        interesting['port-mappings'] = portKeys.collectEntries {
             def port = parsed['HostConfig']['PortBindings'][it] ? parsed['HostConfig']['PortBindings'][it]['HostPort'].first() : '-'
             [(it): port]
         }
+        interesting['mount-points'] = parsed['Mounts'].collectEntries {
+            // creates a mapping from container side to host side
+            [(it['Destination']): it['Source']]
+        }
+
         interesting
     }
 }
