@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/monitor-api-gateway.iml" filepath="$PROJECT_DIR$/monitor-api-gateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/docker-inspect-to-compose.iml" filepath="$PROJECT_DIR$/docker-inspect-to-compose.iml" />
     </modules>
   </component>
 </project>
