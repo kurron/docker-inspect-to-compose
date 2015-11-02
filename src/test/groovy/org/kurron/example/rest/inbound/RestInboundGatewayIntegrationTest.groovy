@@ -81,9 +81,10 @@ class RestInboundGatewayIntegrationTest extends Specification implements Generat
             def yaml =
 """
 ${name}:
+    container_name: ${name}
     image: ${it['image']}
     restart: always
-    net: bridged
+    net: bridge
     log_driver: "syslog"
     log_opt:
         syslog-facility: daemon
@@ -93,9 +94,10 @@ ${name}:
             def yaml =
                     """
 ${name}:
+    container_name: ${name}
     image: ${it['image']}
     restart: always
-    net: host
+    net: bridge
     log_driver: "json-file"
 """
             def yamlBuilder = new StringBuilder( yaml )
