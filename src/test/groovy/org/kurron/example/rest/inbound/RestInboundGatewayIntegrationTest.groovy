@@ -77,6 +77,7 @@ class RestInboundGatewayIntegrationTest extends Specification implements Generat
         def json = new JsonSlurper().parseText( response.body ) as List
         def compose = json.collect {
             def name = it['name'].substring( 1 )
+/*
             def yaml =
 """
 ${name}:
@@ -87,6 +88,15 @@ ${name}:
     log_opt:
         syslog-facility: daemon
         syslog-tag: "${name}"
+"""
+*/
+            def yaml =
+                    """
+${name}:
+    image: ${it['image']}
+    restart: always
+    net: host
+    log_driver: "json-file"
 """
             def yamlBuilder = new StringBuilder( yaml )
             if ( it['port-mappings'] ) {

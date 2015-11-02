@@ -57,11 +57,6 @@ class RestInboundGateway extends AbstractFeedbackAware {
      **/
     private final RestOperations theTemplate
 
-    /**
-     * Mapping of service names to their service endpoints
-     **/
-    private final Map<String,URI> serviceToUriMap = [default: UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'google.com' ).path( '/' ).build().toUri()]
-
     @Autowired
     RestInboundGateway( final ApplicationProperties aConfiguration,
                         final CounterService aCounterService,
