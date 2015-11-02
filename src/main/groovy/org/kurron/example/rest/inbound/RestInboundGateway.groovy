@@ -19,6 +19,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import static org.springframework.web.bind.annotation.RequestMethod.POST
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
+import groovy.transform.CompileDynamic
 import java.util.concurrent.ThreadLocalRandom
 import org.kurron.example.rest.ApplicationProperties
 import org.kurron.example.rest.feedback.ExampleFeedbackContext
@@ -77,10 +78,6 @@ class RestInboundGateway extends AbstractFeedbackAware {
         def loggingID = correlationID.orElse( Integer.toHexString( ThreadLocalRandom.newInstance().nextInt( 0, Integer.MAX_VALUE ) ) )
         feedbackProvider.sendFeedback( ExampleFeedbackContext.PROCESSING_REQUEST, loggingID )
 
-        // 01 - list all containers -- running and not
-        // 02 - extract the container ids
-        // 03 - for each container, inspect them
-
         def parsed = new JsonSlurper().parseText( request )
         def dockerURI = parsed['docker-uri'] as String
         def containers = obtainContainerIDs( dockerURI )
@@ -92,7 +89,7 @@ class RestInboundGateway extends AbstractFeedbackAware {
         new ResponseEntity<String>( builder.toPrettyString(), HttpStatus.OK )
     }
 
-    List<String> obtainContainerIDs( String dockerURI ) {
+    private List<String> obtainContainerIDs( String dockerURI ) {
 
         def serviceURI = UriComponentsBuilder.fromHttpUrl( dockerURI ).path( '/containers/json' ).query( 'all=1' ) .build().toUri()
         ResponseEntity<String> response = theTemplate.getForEntity( serviceURI, String )
@@ -100,7 +97,8 @@ class RestInboundGateway extends AbstractFeedbackAware {
         parsed.collect { it['Id'] as String }
     }
 
-    Map<String,String> inspectContainer( String dockerURI, String containerID ) {
+    @CompileDynamic
+    private Map<String,String> inspectContainer( String dockerURI, String containerID ) {
 
         def serviceURI = UriComponentsBuilder.fromHttpUrl( dockerURI ).path( '/containers/{containerID}/json' ).query( 'all=1' ) .buildAndExpand( containerID ).toUri()
         ResponseEntity<String> response = theTemplate.getForEntity( serviceURI, String )
