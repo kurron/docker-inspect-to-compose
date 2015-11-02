@@ -112,6 +112,11 @@ ${name}:
                 it['environment'].each { mapping -> yamlBuilder.append( '        - ' ).append( mapping ).append( System.getProperty( 'line.separator' ) ) }
             }
 
+            if ( it['hosts'] ) {
+                yamlBuilder.append( '    extra_hosts: ' ).append( System.getProperty( 'line.separator' ) )
+                it['hosts'].each { mapping -> yamlBuilder.append( '        - ' ).append( '"' ).append( mapping ).append( '"' ).append( System.getProperty( 'line.separator' ) ) }
+            }
+
             yamlBuilder.append( System.getProperty( 'line.separator' ) ).toString()
         }
 

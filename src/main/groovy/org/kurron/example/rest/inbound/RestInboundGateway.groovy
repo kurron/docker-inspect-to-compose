@@ -118,6 +118,7 @@ class RestInboundGateway extends AbstractFeedbackAware {
             [(it['Destination']): it['Source']]
         }
         interesting['environment'] = parsed['Config']['Env']
+        interesting['hosts'] = parsed['HostConfig']['ExtraHosts']
 
         interesting
     }
