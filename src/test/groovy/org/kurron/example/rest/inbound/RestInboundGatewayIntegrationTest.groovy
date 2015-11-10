@@ -49,6 +49,59 @@ class RestInboundGatewayIntegrationTest extends Specification implements Generat
     int port
 
     def requestPayload = ['docker-uri': UriComponentsBuilder.newInstance().scheme( 'http' ).host( '192.168.255.18' ).port( 2375 ).path( '/' ).build().toUri().toString()]
+    def retagPayload = ['docker-uri': UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( 2375 ).path( '/' ).build().toUri().toString()]
+
+    def 'exercise retag'() {
+
+        given: 'a valid environment'
+        assert theTemplate
+        assert port
+
+        def builder = new JsonBuilder( retagPayload )
+        def payload = builder.toPrettyString()
+
+        and: 'the POST request is made'
+        def uri = UriComponentsBuilder.newInstance().scheme( 'http' ).host( 'localhost' ).port( port ).path( '/retag' ).build().toUri()
+        def headers = new HttpHeaders()
+        headers.setContentType( MediaType.APPLICATION_JSON )
+        headers.add( 'X-Correlation-Id', randomHexString() )
+        HttpEntity<String> request = new HttpEntity<>( payload, headers )
+        Future<ResponseEntity<String>> future = theTemplate.postForEntity( uri, request, String )
+
+        when: 'the answer comes back'
+        def response = future.get()
+
+        then: 'the endpoint returns with 200'
+        response.statusCode == HttpStatus.OK
+
+        and: 'the expected fields are present'
+        def json = new JsonSlurper().parseText( response.body )
+        def tagCommands = json['image-tags'].collect {
+            def oldTag = it as String
+            def newTag = oldTag.replace( 'registry.transparent.com', 'docker-registry-load-balancer-385982309.us-west-2.elb.amazonaws.com/docker' )
+            "docker tag ${oldTag} ${newTag} "
+        }
+        def pushCommands = json['image-tags'].collect {
+            def oldTag = it as String
+            def newTag = oldTag.replace( 'registry.transparent.com', 'docker-registry-load-balancer-385982309.us-west-2.elb.amazonaws.com/docker' )
+            "docker push ${newTag}"
+        }
+        def file = new File( 'retag-and-push.sh' )
+        file.withWriter('UTF-8') { writer ->
+            writer.write( '#!/bin/bash' )
+            writer.write( System.getProperty( 'line.separator' ) )
+            writer.write( System.getProperty( 'line.separator' ) )
+            tagCommands.each { line ->
+                writer.write( line )
+                writer.write( System.getProperty( 'line.separator' ) )
+            }
+            pushCommands.each { line ->
+                writer.write( line )
+                writer.write( System.getProperty( 'line.separator' ) )
+            }
+        }
+        true
+    }
 
     def 'exercise happy path'() {
 

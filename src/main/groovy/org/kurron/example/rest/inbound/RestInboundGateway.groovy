@@ -84,6 +84,38 @@ class RestInboundGateway extends AbstractFeedbackAware {
         new ResponseEntity<String>( builder.toPrettyString(), HttpStatus.OK )
     }
 
+    @RequestMapping( value='/retag', method = POST, consumes = [APPLICATION_JSON_VALUE], produces = [APPLICATION_JSON_VALUE] )
+    ResponseEntity<String> retag( @RequestBody final String request, @RequestHeader( 'X-Correlation-Id' ) Optional<String> correlationID ) {
+        counterService.increment( 'gateway.retag' )
+
+        def loggingID = correlationID.orElse( Integer.toHexString( ThreadLocalRandom.newInstance().nextInt( 0, Integer.MAX_VALUE ) ) )
+        feedbackProvider.sendFeedback( ExampleFeedbackContext.PROCESSING_REQUEST, loggingID )
+
+        def parsed = new JsonSlurper().parseText( request )
+        def dockerURI = parsed['docker-uri'] as String
+        def images = obtainImageInformation( dockerURI )
+        def imageInfo = ['image-tags': images]
+        def builder = new JsonBuilder( imageInfo )
+        new ResponseEntity<String>( builder.toPrettyString(), HttpStatus.OK )
+    }
+
+    private List<String> obtainImageInformation( String dockerURI ) {
+
+        def serviceURI = UriComponentsBuilder.fromHttpUrl( dockerURI ).path( '/images/json' ).query( 'all=1' ) .build().toUri()
+        ResponseEntity<String> response = theTemplate.getForEntity( serviceURI, String )
+        def parsed = new JsonSlurper().parseText( response.body )
+        def filtered = parsed.findAll {
+            def repoTags = it['RepoTags'] as List<String>
+            repoTags.find { tag -> tag.startsWith( 'registry.transparent.com' ) }
+        }
+        filtered.collect {
+            def repoTags = it['RepoTags'] as List<String>
+            assert repoTags.size() == 1
+            repoTags.first()
+        }
+    }
+
+
     private List<String> obtainContainerIDs( String dockerURI ) {
 
         def serviceURI = UriComponentsBuilder.fromHttpUrl( dockerURI ).path( '/containers/json' ).query( 'all=1' ) .build().toUri()
