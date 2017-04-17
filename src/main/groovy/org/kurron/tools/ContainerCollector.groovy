@@ -30,9 +30,42 @@ class ContainerCollector {
      */
     private final client = new OkDockerClient()
 
-    List<Map<String,String>> collectMetaData() {
-        def result = client.get( [path: '/containers/json'] )
-        def good = result.status['success']
-        result.content as List<Map<String,String>>
+    Map<String, Map<String,String>> collectMetaData() {
+        def containerMetaData = obtainContainerMetaData()
+        def containerDetails = containerMetaData.collect { it['Id'] as String }.collect { String id ->
+            obtainContainerDetails( id )
+        }
+        def containerToGeneralInformation = containerMetaData.collectEntries { it ->
+            [(it['Id']): (it)]
+        }
+        containerDetails.inject( containerToGeneralInformation ) { accumulator, it ->
+            def toAddTo = accumulator[it['Id']] as Map<String,String>
+            it.collectEntries( toAddTo ) { key, value ->
+                String transformedKey = "Detail${key}"
+                [(transformedKey): value]
+            }
+            accumulator
+        }
+        containerToGeneralInformation
+    }
+
+    private List<Map<String,String>> obtainContainerMetaData()
+    {
+        def response = client.get( [path: '/containers/json' ] )
+        if( !response.status['success'] )
+        {
+            throw new IllegalStateException( 'Unable to gather container meta-data' )
+        }
+        response.content as List<Map<String,String>>
+    }
+
+    private Map<String,String> obtainContainerDetails( String id )
+    {
+        def response = client.get( [path: "/containers/${id}/json"] )
+        if( !response.status['success'] )
+        {
+            throw new IllegalStateException( 'Unable to gather container details' )
+        }
+        response.content as Map<String,String>
     }
 }
