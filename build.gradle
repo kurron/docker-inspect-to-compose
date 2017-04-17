@@ -19,8 +19,8 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
         classpath "io.spring.gradle:dependency-management-plugin:${dependencyPluginVersion}"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
     }
 }
 
@@ -30,6 +30,7 @@ plugins {
 
 description = 'The API Gateway portion of the monitoring simulation.'
 group = 'org.kurron.example'
+ext.builtOn = new Date()
 
 ext.coverageExcludes = []
 

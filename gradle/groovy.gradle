@@ -89,7 +89,7 @@ groovydoc {
     header = "header: $project.name $version"
     windowTitle = "windowTitle: $project.name $version"
     includePrivate = false
-    overview = 'overview.html'
+    overviewText = resources.text.fromFile( 'overview.html' )
     use = true
 }
 

@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply plugin: 'spring-boot'
-apply plugin: 'io.spring.dependency-management'
 
-// Import Spring Boot's bom, spring-boot-dependencies
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootVersion}"
-    }
-}
+apply plugin: 'org.springframework.boot'
 
-configurations {
-    providedRuntime
+// sometimes, other projects want to use the artifact as a dependency, so we'll make TWO jars
+bootRepackage  {
+    classifier = 'executable'
 }
 
 // have Gradle expand properties when copying resource files
@@ -32,13 +26,27 @@ processResources {
     filesMatching( '**/application.yml' ) {
         expand( project.properties )
     }
+    filesMatching( '**/bootstrap.yml' ) {
+        expand( project.properties )
+    }
 }
 
-dependencies {
-    compile("org.springframework.boot:spring-boot-starter-actuator")
-    compile("org.springframework.boot:spring-boot-starter-hateoas")
-    compile("org.springframework.boot:spring-boot-starter-security")
-    compile("org.springframework.boot:spring-boot-starter-web")
+springBoot  {
+    // enable a self-executing jar .eg ./my-jar.jar
+    executable = true
 
-    testCompile "org.springframework.boot:spring-boot-starter-test"
+    // attributes to expose via the /info actuator
+    buildInfo {
+        additionalProperties = [
+                'name': "${project.name}",
+                'description': "${project.description}",
+                'built-on.date': "${project.builtOn}",
+                'build-using.groovy.version': "${project.groovyVersion}",
+                'build-using.java.version': System.properties['java.version'],
+                'build-using.java.vendor': System.properties['java.vendor'],
+                'built-on.os.name': System.properties['os.name'],
+                'built-on.os.arch': System.properties['os.arch'],
+                'built-on.os.version': System.properties['os.version']
+        ]
+    }
 }

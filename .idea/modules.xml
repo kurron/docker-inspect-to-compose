@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/docker-inspect-to-compose.iml" filepath="$PROJECT_DIR$/docker-inspect-to-compose.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/docker-inspect-to-compose_main.iml" filepath="$PROJECT_DIR$/.idea/modules/docker-inspect-to-compose_main.iml" group="docker-inspect-to-compose" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/docker-inspect-to-compose_test.iml" filepath="$PROJECT_DIR$/.idea/modules/docker-inspect-to-compose_test.iml" group="docker-inspect-to-compose" />
     </modules>
   </component>
 </project>

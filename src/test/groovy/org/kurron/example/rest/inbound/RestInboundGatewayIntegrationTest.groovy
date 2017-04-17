@@ -19,18 +19,14 @@ package org.kurron.example.rest.inbound
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import java.util.concurrent.Future
-import org.kurron.example.rest.Application
 import org.kurron.traits.GenerationAbility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.SpringApplicationContextLoader
-import org.springframework.boot.test.WebIntegrationTest
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.test.context.ContextConfiguration
 import org.springframework.web.client.AsyncRestOperations
 import org.springframework.web.util.UriComponentsBuilder
 import spock.lang.Specification
@@ -38,8 +34,6 @@ import spock.lang.Specification
 /**
  * Integration test for the RestInboundGateway object.
  **/
-@ContextConfiguration( loader = SpringApplicationContextLoader, classes = [Application] )
-@WebIntegrationTest( randomPort = true )
 class RestInboundGatewayIntegrationTest extends Specification implements GenerationAbility {
 
     @Autowired
