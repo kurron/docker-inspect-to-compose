@@ -28,6 +28,11 @@ class RunAtStartUp implements ApplicationRunner {
     @Override
     void run( final ApplicationArguments arguments ) {
 
+        def rawArguments = arguments.sourceArgs
+        Optional.ofNullable( arguments.containsOption( 'one' ) ).map( { value -> println value } )
+        arguments.getOptionValues( 'one' )
+        def justSwitches = arguments.nonOptionArgs
+        def optionNames = arguments.optionNames
         log.debug( 'Command-line arguments are: ', arguments.sourceArgs.join( ',' ) )
     }
 }
