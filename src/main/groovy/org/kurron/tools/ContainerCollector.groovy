@@ -31,22 +31,25 @@ class ContainerCollector {
     private final client = new OkDockerClient()
 
     Map<String, Map<String,String>> collectMetaData() {
-        def containerMetaData = obtainContainerMetaData()
-        def containerDetails = containerMetaData.collect { it['Id'] as String }.collect { String id ->
+        def generalContainerData = obtainContainerMetaData()
+        def detailsContainerData = generalContainerData.collect { it['Id'] as String }.collect { String id ->
             obtainContainerDetails( id )
         }
-        def containerToGeneralInformation = containerMetaData.collectEntries { it ->
+        def containerToMetaData = generalContainerData.collectEntries { it ->
             [(it['Id']): (it)]
         }
-        containerDetails.inject( containerToGeneralInformation ) { accumulator, it ->
+
+        // reduce the two maps down to one
+        detailsContainerData.inject( containerToMetaData ) { accumulator, it ->
             def toAddTo = accumulator[it['Id']] as Map<String,String>
+            // add detailed meta-data to the map
             it.collectEntries( toAddTo ) { key, value ->
                 String transformedKey = "Detail${key}"
                 [(transformedKey): value]
             }
             accumulator
         }
-        containerToGeneralInformation
+        containerToMetaData
     }
 
     private List<Map<String,String>> obtainContainerMetaData()
