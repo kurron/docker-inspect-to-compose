@@ -18,7 +18,7 @@
 <!-- This Logback configuration file is intended for production environments running inside a Docker container. -->
 <configuration debug="false">
     <property name="MESSAGE_FORMAT"
-              value="%contextName %1(%.-1level) %35.35logger{0} %message %throwable{short}%n"/>
+              value="%1(%.-1level) %35.35logger{0} %message %throwable{short}%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
