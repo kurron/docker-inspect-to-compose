@@ -41,7 +41,6 @@ springBoot  {
                 'name': "${project.name}",
                 'description': "${project.description}",
                 'built-on.date': "${project.builtOn}",
-                'build-using.groovy.version': "${project.groovyVersion}",
                 'build-using.java.version': System.properties['java.version'],
                 'build-using.java.vendor': System.properties['java.vendor'],
                 'built-on.os.name': System.properties['os.name'],

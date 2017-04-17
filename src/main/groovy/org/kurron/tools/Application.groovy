@@ -16,26 +16,30 @@
 package org.kurron.tools
 
 import groovy.util.logging.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
+import org.springframework.context.annotation.Bean
 
 /**
- * This is the main entry into the application. Running from the command-line using embedded Tomcat will invoke
- * the main() method.
- */
+ * The entry point into the system.  Kicks off the application logic.
+ **/
+@Slf4j
 @SpringBootApplication
 @EnableConfigurationProperties( ApplicationProperties )
-@Slf4j
-@SuppressWarnings( 'GStringExpressionWithinString' )
 class Application {
 
-    /**
-     * Called to start the entire application. Typically, java -jar foo.jar.
-     * @param args any arguments to the program.
-     */
     static void main( String[] args ) {
-        log.info '--- Running embedded web container ----'
         SpringApplication.run( Application, args )
     }
+
+    @Autowired
+    ApplicationProperties configuration
+
+    @Bean
+    RunAtStartUp runAtStartUp() {
+        new RunAtStartUp()
+    }
+
 }

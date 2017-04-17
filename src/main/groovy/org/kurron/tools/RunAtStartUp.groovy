@@ -1,6 +1,5 @@
-
 /*
- * Copyright (c) 2015. Ronald D. Kurr kurr@jvmguy.com
+ * Copyright (c) 2017. Ronald D. Kurr kurr@jvmguy.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +14,20 @@
  * limitations under the License.
  */
 
-dependencies {
-    testCompile( 'org.spockframework:spock-spring' ) {
-        exclude module: 'groovy-all'
+package org.kurron.tools
+
+import groovy.util.logging.Slf4j
+import org.springframework.boot.ApplicationArguments
+import org.springframework.boot.ApplicationRunner
+
+/**
+ * Initialization logic, like pre-warming a cache, goes here.  We'll be using it to interrogate the Docker daemon.
+ **/
+@Slf4j
+class RunAtStartUp implements ApplicationRunner {
+    @Override
+    void run( final ApplicationArguments arguments ) {
+
+        log.debug( 'Command-line arguments are: ', arguments.sourceArgs.join( ',' ) )
     }
 }

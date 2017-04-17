@@ -19,7 +19,6 @@ package org.kurron.example.rest.inbound
 import groovy.json.JsonBuilder
 import groovy.json.JsonSlurper
 import java.util.concurrent.Future
-import org.kurron.traits.GenerationAbility
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpEntity
@@ -34,7 +33,7 @@ import spock.lang.Specification
 /**
  * Integration test for the RestInboundGateway object.
  **/
-class RestInboundGatewayIntegrationTest extends Specification implements GenerationAbility {
+class RestInboundGatewayIntegrationTest extends Specification {
 
     @Autowired
     AsyncRestOperations theTemplate

@@ -44,26 +44,13 @@ apply from: "$rootDir/gradle/maven-publish.gradle"
 apply from: "$rootDir/gradle/spock.gradle"
 apply from: "$rootDir/gradle/dependency-exclusions.gradle"
 apply from: "$rootDir/gradle/conflicts.gradle"
-apply from: "$rootDir/gradle/bintray.gradle"
 
 dependencies {
-    compile "org.codehaus.groovy:groovy-all:${groovyVersion}:indy"
-    compile "org.kurron:tools-groovy:${toolsGroovyVersion}"
-    runtime "net.logstash.logback:logstash-logback-encoder:${logstashLogbackVersion}"
+    compile "org.codehaus.groovy:groovy-all::indy"
+    compile 'org.springframework.boot:spring-boot-starter'
+    compile 'org.springframework:spring-web'
 }
 
 defaultTasks << 'clean'
 defaultTasks << 'build'
-
-if ( 'true' == runIntegrationTests ) {
-    defaultTasks += ['outboundIntegrationTests', 'inboundIntegrationTests']
-}
-
-// only publish artifacts if publishArtifacts is true, and the branch is either master or development
-if ( 'true' == publishArtifacts && branch in ['master', 'development'] ) {
-    defaultTasks << 'publish'
-}
-else {
-    defaultTasks << 'publishToMavenLocal'
-}
 

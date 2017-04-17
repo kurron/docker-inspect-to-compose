@@ -17,21 +17,12 @@
 
 <!-- This Logback configuration file is intended for production environments running inside a Docker container. -->
 <configuration debug="false">
-    <contextName>PRODUCTION</contextName>
+    <property name="MESSAGE_FORMAT"
+              value="%contextName %1(%.-1level) %35.35logger{0} %message %throwable{short}%n"/>
 
-    <!-- 12 Factor says only log to STDOUT and STDERR and let the process manager worrying about sending it to logstash. -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="net.logstash.logback.encoder.LogstashEncoder">
-            <includeContext>false</includeContext>
-            <timeZone>UTC</timeZone>
-            <fieldNames>
-                <timestamp>timestamp</timestamp>
-                <message>message</message>
-                <logger>component</logger>
-                <version>[ignore]</version>
-                <thread>[ignore]</thread>
-                <levelValue>[ignore]</levelValue>
-            </fieldNames>
+        <encoder>
+            <pattern>${MESSAGE_FORMAT}</pattern>
         </encoder>
     </appender>
 
