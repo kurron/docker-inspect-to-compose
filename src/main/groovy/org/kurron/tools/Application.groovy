@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kurron.example.rest
+package org.kurron.tools
 
 import groovy.util.logging.Slf4j
 import org.springframework.boot.SpringApplication
