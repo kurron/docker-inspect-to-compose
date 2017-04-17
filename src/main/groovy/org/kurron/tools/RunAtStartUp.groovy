@@ -25,6 +25,13 @@ import org.springframework.boot.ApplicationRunner
  **/
 @Slf4j
 class RunAtStartUp implements ApplicationRunner {
+
+    private ContainerCollector containerCollector
+
+    RunAtStartUp( final ContainerCollector aContainerCollector ) {
+        containerCollector = aContainerCollector
+    }
+
     @Override
     void run( final ApplicationArguments arguments ) {
 
@@ -34,5 +41,8 @@ class RunAtStartUp implements ApplicationRunner {
         def justSwitches = arguments.nonOptionArgs
         def optionNames = arguments.optionNames
         log.debug( 'Command-line arguments are: ', arguments.sourceArgs.join( ',' ) )
+
+        def metaData = containerCollector.collectMetaData()
+        'foo'
     }
 }

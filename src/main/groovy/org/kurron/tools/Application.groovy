@@ -38,8 +38,12 @@ class Application {
     ApplicationProperties configuration
 
     @Bean
-    RunAtStartUp runAtStartUp() {
-        new RunAtStartUp()
+    RunAtStartUp runAtStartUp( ContainerCollector containerCollector ) {
+        new RunAtStartUp( containerCollector )
     }
 
+    @Bean
+    ContainerCollector containerCollector() {
+        new ContainerCollector()
+    }
 }
