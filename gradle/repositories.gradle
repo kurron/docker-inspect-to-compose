@@ -24,6 +24,10 @@ repositories {
         url = 'http://dl.bintray.com/kurron/maven'
     }
     maven {
+        name = 'docker-client'
+        url 'http://dl.bintray.com/gesellix/docker-utils'
+    }
+    maven {
         name = 'Spring Milestone'
         url = 'http://repo.spring.io/libs-milestone-local/'
     }

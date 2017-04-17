@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.apache.commons:commons-compress:1.13">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-compress/1.13/15c5e9584200122924e50203ae210b57616b75ee/commons-compress-1.13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.apache.commons/commons-compress/1.13/68ace8baf343f0384ba1fc995944c1d60f41f660/commons-compress-1.13-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

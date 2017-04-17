@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: de.gesellix:docker-client:2017-04-13T20-17-22">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/de.gesellix/docker-client/2017-04-13T20-17-22/de9a6662f13ef9dbb5840e79757830787f35e789/docker-client-2017-04-13T20-17-22.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/de.gesellix/docker-client/2017-04-13T20-17-22/5471610390192ba02632d2fe669a8ea8fb9cd5a4/docker-client-2017-04-13T20-17-22-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -49,6 +49,11 @@ dependencies {
     compile "org.codehaus.groovy:groovy-all::indy"
     compile 'org.springframework.boot:spring-boot-starter'
     compile 'org.springframework:spring-web'
+    compile ( "de.gesellix:docker-client:${dockerClientVersion}" ) {
+        exclude group: 'org.codehaus.groovy'
+        exclude group: 'org.slf4j'
+    }
+    testCompile "org.kurron:tools-groovy:${toolsGroovyVersion}"
 }
 
 defaultTasks << 'clean'
