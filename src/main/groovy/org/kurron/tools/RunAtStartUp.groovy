@@ -42,7 +42,13 @@ class RunAtStartUp implements ApplicationRunner {
         def optionNames = arguments.optionNames
         log.debug( 'Command-line arguments are: ', arguments.sourceArgs.join( ',' ) )
 
+
         def metaData = containerCollector.collectMetaData()
+        def outputFileName = Optional.ofNullable( arguments.getOptionValues( 'output' ) ).orElse( ['docker-compose.yml'] )
+        def outputFile = new File( outputFileName.first() )
+        outputFile.withWriter( 'UTF-8' ) { writer ->
+            writer.write( 'bob' )
+        }
         'foo'
     }
 }

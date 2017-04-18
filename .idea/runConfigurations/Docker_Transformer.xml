@@ -2,7 +2,7 @@
   <configuration default="false" name="Docker Transformer" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="org.kurron.tools.Application" />
-    <option name="PROGRAM_PARAMETERS" value="--one=alpha --two=bravo --three=charlie" />
+    <option name="PROGRAM_PARAMETERS" value="--one=alpha --two=bravo --three=charlie --alone bar" />
     <option name="ALTERNATIVE_JRE_PATH" />
     <module name="docker-inspect-to-compose_main" />
     <envs />
