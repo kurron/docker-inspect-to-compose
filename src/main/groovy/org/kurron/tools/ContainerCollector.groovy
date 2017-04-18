@@ -17,6 +17,7 @@
 package org.kurron.tools
 
 import de.gesellix.docker.client.OkDockerClient
+import groovy.transform.CompileDynamic
 import groovy.util.logging.Slf4j
 
 /**
@@ -52,6 +53,7 @@ class ContainerCollector {
         containerToMetaData
     }
 
+    @CompileDynamic // the Docker client uses dynamic typing
     private List<Map<String,String>> obtainContainerMetaData()
     {
         def response = client.get( [path: '/containers/json' ] )
@@ -62,6 +64,7 @@ class ContainerCollector {
         response.content as List<Map<String,String>>
     }
 
+    @CompileDynamic // the Docker client uses dynamic typing
     private Map<String,String> obtainContainerDetails( String id )
     {
         def response = client.get( [path: "/containers/${id}/json"] )

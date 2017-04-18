@@ -16,6 +16,8 @@
 
 package org.kurron.tools
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import groovy.util.logging.Slf4j
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
@@ -47,7 +49,8 @@ class RunAtStartUp implements ApplicationRunner {
         def outputFileName = Optional.ofNullable( arguments.getOptionValues( 'output' ) ).orElse( ['docker-compose.yml'] )
         def outputFile = new File( outputFileName.first() )
         outputFile.withWriter( 'UTF-8' ) { writer ->
-            writer.write( 'bob' )
+            def mapper = new ObjectMapper( new YAMLFactory() )
+            mapper.writeValue( writer, metaData )
         }
         'foo'
     }

@@ -49,6 +49,8 @@ dependencies {
     compile "org.codehaus.groovy:groovy-all::indy"
     compile 'org.springframework.boot:spring-boot-starter'
     compile 'org.springframework:spring-web'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml'
+    compile 'com.fasterxml.jackson.core:jackson-databind'
     compile ( "de.gesellix:docker-client:${dockerClientVersion}" ) {
         exclude group: 'org.codehaus.groovy'
         exclude group: 'org.slf4j'
