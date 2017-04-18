@@ -30,8 +30,11 @@ class RunAtStartUp implements ApplicationRunner {
 
     private ContainerCollector containerCollector
 
-    RunAtStartUp( final ContainerCollector aContainerCollector ) {
+    private MetaDataTransformer metaDataTransformer
+
+    RunAtStartUp( final ContainerCollector aContainerCollector, final MetaDataTransformer aMetaDataTransformer ) {
         containerCollector = aContainerCollector
+        metaDataTransformer = aMetaDataTransformer
     }
 
     @Override
@@ -46,11 +49,14 @@ class RunAtStartUp implements ApplicationRunner {
 
 
         def metaData = containerCollector.collectMetaData()
+        def dockerCompose = metaDataTransformer.convert( metaData )
+
         def outputFileName = Optional.ofNullable( arguments.getOptionValues( 'output' ) ).orElse( ['docker-compose.yml'] )
         def outputFile = new File( outputFileName.first() )
         outputFile.withWriter( 'UTF-8' ) { writer ->
-            def mapper = new ObjectMapper( new YAMLFactory() )
-            mapper.writeValue( writer, metaData )
+            def factory = new YAMLFactory()
+            def mapper = new ObjectMapper( factory )
+            mapper.writeValue( writer, metaData.sort() )
         }
         'foo'
     }

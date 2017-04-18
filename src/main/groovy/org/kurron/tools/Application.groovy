@@ -38,12 +38,17 @@ class Application {
     ApplicationProperties configuration
 
     @Bean
-    RunAtStartUp runAtStartUp( ContainerCollector containerCollector ) {
-        new RunAtStartUp( containerCollector )
+    RunAtStartUp runAtStartUp( ContainerCollector containerCollector, MetaDataTransformer metaDataTransformer ) {
+        new RunAtStartUp( containerCollector, metaDataTransformer )
     }
 
     @Bean
     ContainerCollector containerCollector() {
         new ContainerCollector()
+    }
+
+    @Bean
+    MetaDataTransformer metaDataTransformer() {
+        new MetaDataTransformer()
     }
 }
