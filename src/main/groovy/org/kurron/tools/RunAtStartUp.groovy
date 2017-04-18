@@ -49,14 +49,14 @@ class RunAtStartUp implements ApplicationRunner {
 
 
         def metaData = containerCollector.collectMetaData()
-        def dockerCompose = metaDataTransformer.convert( metaData )
+        def dockerCompose = metaDataTransformer.convert( metaData.sort() )
 
         def outputFileName = Optional.ofNullable( arguments.getOptionValues( 'output' ) ).orElse( ['docker-compose.yml'] )
         def outputFile = new File( outputFileName.first() )
         outputFile.withWriter( 'UTF-8' ) { writer ->
             def factory = new YAMLFactory()
             def mapper = new ObjectMapper( factory )
-            mapper.writeValue( writer, metaData.sort() )
+            mapper.writeValue( writer, dockerCompose )
         }
         'foo'
     }

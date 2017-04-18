@@ -23,8 +23,57 @@ class MetaDataTransformer {
 
     Map<String, Map<String,String>> convert( Map<String, Map<String,String>> metaData ) {
 
+        //TODO: test when keys are missing
+        /*
+        DetailName -> service
+
+        DetailHostConfig.Memory -> deploy:resource:limits:memory
+        DetailHostConfig.MemoryReservation -> deploy:resource:reservations:memory
+        DetailConfig.Entrypoint -> entrypoint
+        DetailConfig.Env -> environment
+        DetailHostConfig.ExtraHosts -> extra_hosts
+        DetailConfig.Healthcheck.Test -> healthcheck:test
+        DetailConfig.Healthcheck.Interval -> healthcheck:invterval
+        DetailConfig.Healthcheck.Timeout -> healthcheck:timeout
+        DetailConfig.Healthcheck.Retries -> healthcheck:retries
+        DetailConfig.Image -> image
+        DetailConfig.Labels -> labels ?
+        DetailHostConfig.LogConfig.Type -> logging:driver
+        DetailHostConfig.LogConfig.Config.foo -> logging:driver:options:foo
+        Ports.PublicPort,Ports.PrivatePort,Ports.Type -> ports
+        Mounts.Source,Mounts.Destination,Mounts.Mode -> volume
+
+        * memory can be defaulted
+        * health check can be defaulted
+        * labels can be defaulted
+        * logging can be defaulted
+        *
+         */
         def services = metaData.collectEntries { key, value ->
-            [(value['DetailName'].substring( 1 ) ): 'foo']
+            def deploy = ['mode'    : 'replicated',
+                          'replicas': '2',
+                          'update_config': [ 'paralleism': '2', 'delay': '10s'],
+                          'restart_policy': [ 'condition': 'on-failure', 'delay': '5s', 'max_attempts': '3', 'window': '120s'],
+                          'resources': ['limits': ['memory': 'FOO'], 'reservations': ['memory': 'FOO']]]
+            def entrypoint = ['FOO', 'BAR']
+            def environment = ['FOO': 'BAR', 'BAZ': 'BAR']
+            def hosts = ['somehost:162.242.195.82', 'otherhost:50.31.209.229']
+            def healthcheck = ['test': ["CMD", "curl", "-f", "http://localhost"], 'interval': '10s', 'timeout': '10s', 'retries': '3']
+            def labels = ['ONE': 'FOO', 'TWO': 'BAR']
+            def logging = ['driver': 'json-file', 'options': ['max-size': '10m']]
+            def ports = ['1234:5678', '9999:8888']
+            def volumes = ['/foo:/bar:ro', '/baz:/bar:rw']
+            def service = ['deploy'     : deploy,
+                           'entrypoint' : entrypoint,
+                           'environment': environment,
+                           'extra_hosts': hosts,
+                           'healthcheck': healthcheck,
+                           'image'      : 'FOO',
+                           'labels'     : labels,
+                           'logging'    : logging,
+                           'ports'      : ports,
+                           'volumes'    : volumes]
+            [(value['DetailName'].substring( 1 ) ): service]
         }
         def compose = ['version': '3', 'services': services ]
         compose
