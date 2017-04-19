@@ -75,7 +75,7 @@ class MetaDataTransformer {
                 def destination = map['Destination']
                 def mode = map['Mode'] ?: 'rw'
                 "${source}:${destination}:${mode}" as String
-            }
+            }.find { !it.startsWith( '/var/lib/docker' ) }
             def networks = ['development']
             def service = ['command': command,
                            'deploy'     : deploy,
@@ -87,8 +87,10 @@ class MetaDataTransformer {
                            'logging'    : logging,
                            'networks'   : networks]
 
+            // since we are supposed to be stateless and we'll never get the mount points correct, don't propagate them
+            // if ( volumes ) { service['volumes'] = volumes }
+
             // Docker does not like empty lists so do not include them if there isn't any data
-            if ( volumes ) { service['volumes'] = volumes }
             if ( ports ) { service['ports'] = ports }
             if ( entrypoint ) { service['entrypoint'] = entrypoint }
             [(value['DetailName'].substring( 1 ) ): service]
