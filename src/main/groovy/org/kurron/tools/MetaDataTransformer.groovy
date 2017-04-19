@@ -55,10 +55,10 @@ class MetaDataTransformer {
         def services = metaData.collectEntries { key, value ->
             def command = [value['DetailPath']] + value['DetailArgs'].collect { it }
             def deploy = ['mode'          : 'replicated',
-                          'replicas'      : 2,
+                          'replicas'      : 1,
                           'update_config' : ['parallelism': 2, 'delay': '10s'],
-                          'restart_policy': ['condition': 'on-failure', 'delay': '5s', 'max_attempts': 3, 'window': '120s'],
-                          'resources'     : ['limits': ['memory': '128m'], 'reservations': ['memory': '128m']]]
+                          'restart_policy': ['condition': 'any', 'delay': '15s', 'window': '60s'],
+                          'resources'     : ['limits': ['memory': '128m'], 'reservations': ['memory': '512m']]]
             def entrypoint = value['DetailConfig']['Entrypoint']
             def environment = value['DetailConfig']['Env']
             def hosts = ['logfaces:192.168.254.123', 'logfaces-boston:192.168.100.124']
