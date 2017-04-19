@@ -50,7 +50,7 @@ class MetaDataTransformer {
         *
          */
         def services = metaData.collectEntries { key, value ->
-            def command = value['DetailPath'] + value['DetailArgs'].collect { it }
+            def command = [value['DetailPath']] + value['DetailArgs'].collect { it }
             def deploy = ['mode'          : 'replicated',
                           'replicas'      : '2',
                           'update_config' : ['parallelism': '2', 'delay': '10s'],
