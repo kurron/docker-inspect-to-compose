@@ -16,11 +16,14 @@
 
 package org.kurron.tools
 
+import groovy.transform.CompileDynamic
+
 /**
  * Converts the raw map of Docker containers into a Docker Compose v3 compatible format.
  **/
 class MetaDataTransformer {
 
+    @CompileDynamic // we use lots of Groovy conveniences which are difficult to type
     Map<String, Map<String,String>> convert( Map<String, Map<String,String>> metaData ) {
 
         //TODO: test when keys are missing

@@ -21,6 +21,10 @@ The application runs standalone and can be conveniently launched via `./gradlew 
 
 # Tips and Tricks
 
+## Specifying The Output File
+By default, `docker-compose.yml` is generated. If you want use a different file name,
+supply the `--output` switch and file name.  For example, `java -jar build/libs/docker-inspect-to-compose-0.0.0.RELEASE-executable.jar --output=foo.yml`.
+
 # Troubleshooting
 
 # License and Credits
