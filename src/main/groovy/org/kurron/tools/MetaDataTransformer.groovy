@@ -50,29 +50,41 @@ class MetaDataTransformer {
         *
          */
         def services = metaData.collectEntries { key, value ->
-            def deploy = ['mode'    : 'replicated',
-                          'replicas': '2',
-                          'update_config': [ 'paralleism': '2', 'delay': '10s'],
-                          'restart_policy': [ 'condition': 'on-failure', 'delay': '5s', 'max_attempts': '3', 'window': '120s'],
-                          'resources': ['limits': ['memory': 'FOO'], 'reservations': ['memory': 'FOO']]]
-            def entrypoint = ['FOO', 'BAR']
-            def environment = ['FOO': 'BAR', 'BAZ': 'BAR']
-            def hosts = ['somehost:162.242.195.82', 'otherhost:50.31.209.229']
-            def healthcheck = ['test': ["CMD", "curl", "-f", "http://localhost"], 'interval': '10s', 'timeout': '10s', 'retries': '3']
-            def labels = ['ONE': 'FOO', 'TWO': 'BAR']
+            def command = value['DetailPath'] + value['DetailArgs'].collect { it }
+            def deploy = ['mode'          : 'replicated',
+                          'replicas'      : '2',
+                          'update_config' : ['parallelism': '2', 'delay': '10s'],
+                          'restart_policy': ['condition': 'on-failure', 'delay': '5s', 'max_attempts': '3', 'window': '120s'],
+                          'resources'     : ['limits': ['memory': '128m'], 'reservations': ['memory': '128m']]]
+            def entrypoint = value['DetailConfig']['Entrypoint']
+            def environment = value['DetailConfig']['Env']
+            def hosts = ['logfaces:192.168.254.123', 'logfaces-boston:192.168.100.124']
+            def healthcheck = ['test': ["curl", "--fail", "http://localhost/"], 'interval': '10s', 'timeout': '10s', 'retries': '3']
+            def labels = ['com.transparent.generated.by': 'inspect-to-compose', 'com.transparent.generated.on': Calendar.instance.time as String]
+            def ports = value['Ports'].collect { map ->
+                def privatePort = map['PrivatePort']
+                def publicPort = map['PublicPort']
+                def protocol = map['Type']
+                "${publicPort}:${privatePort}/${protocol}" as String
+            }
             def logging = ['driver': 'json-file', 'options': ['max-size': '10m']]
-            def ports = ['1234:5678', '9999:8888']
-            def volumes = ['/foo:/bar:ro', '/baz:/bar:rw']
-            def service = ['deploy'     : deploy,
-                           'entrypoint' : entrypoint,
+            def volumes = value['Mounts'].collect { map ->
+                def source = map['Source']
+                def destination = map['Destination']
+                def mode = map['Mode'] ?: 'rw'
+                "${source}:${destination}:${mode}" as String
+            }
+            def service = ['command': command,
+                           'deploy'     : deploy,
                            'environment': environment,
                            'extra_hosts': hosts,
                            'healthcheck': healthcheck,
-                           'image'      : 'FOO',
+                           'image'      : value['DetailConfig']['Image'],
                            'labels'     : labels,
                            'logging'    : logging,
                            'ports'      : ports,
                            'volumes'    : volumes]
+            if ( entrypoint ) { service['entrypoint'] = entrypoint }
             [(value['DetailName'].substring( 1 ) ): service]
         }
         def compose = ['version': '3', 'services': services ]
