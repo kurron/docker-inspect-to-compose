@@ -52,14 +52,14 @@ class MetaDataTransformer {
         def services = metaData.collectEntries { key, value ->
             def command = [value['DetailPath']] + value['DetailArgs'].collect { it }
             def deploy = ['mode'          : 'replicated',
-                          'replicas'      : '2',
-                          'update_config' : ['parallelism': '2', 'delay': '10s'],
-                          'restart_policy': ['condition': 'on-failure', 'delay': '5s', 'max_attempts': '3', 'window': '120s'],
+                          'replicas'      : 2,
+                          'update_config' : ['parallelism': 2, 'delay': '10s'],
+                          'restart_policy': ['condition': 'on-failure', 'delay': '5s', 'max_attempts': 3, 'window': '120s'],
                           'resources'     : ['limits': ['memory': '128m'], 'reservations': ['memory': '128m']]]
             def entrypoint = value['DetailConfig']['Entrypoint']
             def environment = value['DetailConfig']['Env']
             def hosts = ['logfaces:192.168.254.123', 'logfaces-boston:192.168.100.124']
-            def healthcheck = ['test': ["curl", "--fail", "http://localhost/"], 'interval': '10s', 'timeout': '10s', 'retries': '3']
+            def healthcheck = ['test': ["curl", "--fail", "http://localhost/"], 'interval': '10s', 'timeout': '10s', 'retries': 3]
             def labels = ['com.transparent.generated.by': 'inspect-to-compose', 'com.transparent.generated.on': Calendar.instance.time as String]
             def ports = value['Ports'].collect { map ->
                 def privatePort = map['PrivatePort']
