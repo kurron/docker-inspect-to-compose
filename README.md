@@ -17,13 +17,14 @@ The project uses [Gradle](http://gradle.org/) to manage builds and will install 
 simply issue `./gradlew`.  After a moment or two, you should have a fully assembled application in `build/libs`.
 
 # Installation
-The application runs standalone and can be conveniently launched via `./gradlew bootRun`.
+The application runs standalone and can be conveniently launched via `./run.sh`.  This will create
+`generated-docker-compose.yml` in the current directory.
 
 # Tips and Tricks
 
 ## Specifying The Output File
-By default, `docker-compose.yml` is generated. If you want use a different file name,
-supply the `--output` switch and file name.  For example, `java -jar build/libs/docker-inspect-to-compose-0.0.0.RELEASE-executable.jar --output=foo.yml`.
+By default, `generated-docker-compose.yml` is generated. If you want use a different file name,
+supply the file name to the `run.sh` script.  For example, `./run.sh foo.yml`.
 
 ## Validating The Output
 Use something like `docker-compose --file foo.yml config --services` to see if Docker Compose thinks

@@ -53,8 +53,9 @@ class RunAtStartUp implements ApplicationRunner {
         def metaData = containerCollector.collectMetaData()
         def dockerCompose = metaDataTransformer.convert( metaData.sort() )
 
-        def outputFileName = Optional.ofNullable( arguments.getOptionValues( 'output' ) ).orElse( ['docker-compose.yml'] )
+        def outputFileName = Optional.ofNullable( arguments.getOptionValues( 'output' ) ).orElse( ['generated-docker-compose.yml'] )
         def outputFile = new File( outputFileName.first() )
+        log.info( 'Generating {}', outputFile.canonicalPath )
         outputFile.withWriter( 'UTF-8' ) { writer ->
             def factory = new YAMLFactory()
             def mapper = new ObjectMapper( factory )
