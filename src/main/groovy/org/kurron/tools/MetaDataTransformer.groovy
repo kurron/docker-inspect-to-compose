@@ -66,9 +66,8 @@ class MetaDataTransformer {
             def labels = ['com.transparent.generated.by': 'inspect-to-compose', 'com.transparent.generated.on': Calendar.instance.time as String]
             def ports = value['Ports'].collect { map ->
                 def privatePort = map['PrivatePort']
-                def publicPort = map['PublicPort']
                 def protocol = map['Type']
-                "${publicPort}:${privatePort}/${protocol}" as String
+                "${privatePort}/${protocol}" as String
             }
             def logging = ['driver': 'json-file', 'options': ['max-size': '10m']]
             def volumes = value['Mounts'].collect { map ->
