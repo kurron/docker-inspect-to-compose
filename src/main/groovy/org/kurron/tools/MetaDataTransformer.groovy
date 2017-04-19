@@ -86,10 +86,12 @@ class MetaDataTransformer {
                            'image'      : value['DetailConfig']['Image'],
                            'labels'     : labels,
                            'logging'    : logging,
-                           'networks'   : networks,
-                           'ports'      : ports,
-                           'volumes'    : volumes]
-            if ( entrypoint ) { service['entrypoint'] = entrypoint }
+                           'networks'   : networks]
+
+            // Docker does not like empty lists so do not include them if there isn't any data
+            if ( volumes ) { service['entrypoint'] = volumes }
+            if ( ports ) { service['ports'] = ports }
+            if ( entrypoint ) { service['volumes'] = entrypoint }
             [(value['DetailName'].substring( 1 ) ): service]
         }
         def networks = ['development': ['driver': 'overlay']]
