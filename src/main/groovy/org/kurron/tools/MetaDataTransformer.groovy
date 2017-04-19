@@ -77,6 +77,7 @@ class MetaDataTransformer {
                 def mode = map['Mode'] ?: 'rw'
                 "${source}:${destination}:${mode}" as String
             }
+            def networks = ['development']
             def service = ['command': command,
                            'deploy'     : deploy,
                            'environment': environment,
@@ -85,12 +86,14 @@ class MetaDataTransformer {
                            'image'      : value['DetailConfig']['Image'],
                            'labels'     : labels,
                            'logging'    : logging,
+                           'networks'   : networks,
                            'ports'      : ports,
                            'volumes'    : volumes]
             if ( entrypoint ) { service['entrypoint'] = entrypoint }
             [(value['DetailName'].substring( 1 ) ): service]
         }
-        def compose = ['version': '3', 'services': services ]
+        def networks = ['development': ['driver': 'overlay']]
+        def compose = ['version': '3', 'networks': networks, 'services': services ]
         compose
     }
 }
