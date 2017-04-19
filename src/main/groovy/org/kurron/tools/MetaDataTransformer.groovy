@@ -58,7 +58,7 @@ class MetaDataTransformer {
                           'replicas'      : 1,
                           'update_config' : ['parallelism': 2, 'delay': '10s'],
                           'restart_policy': ['condition': 'any', 'delay': '15s', 'window': '60s'],
-                          'resources'     : ['limits': ['memory': '512m'], 'reservations': ['memory': '128m']]]
+                          'resources'     : ['limits': ['memory': '768m'], 'reservations': ['memory': '128m']]]
             def entrypoint = value['DetailConfig']['Entrypoint']
             def environment = value['DetailConfig']['Env']
             def hosts = ['logfaces:192.168.254.123', 'logfaces-boston:192.168.100.124']
