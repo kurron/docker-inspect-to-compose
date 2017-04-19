@@ -13,12 +13,14 @@ information.  Supported output forms include:
 * Development and testing was done on [Ubuntu Linux](http://www.ubuntu.com/) but other JVM compatible operating systems should work as well
 
 # Building
-The project uses [Gradle](http://gradle.org/) to manage builds and will install itself upon first build.  To initiate a build,
-simply issue `./gradlew`.  After a moment or two, you should have a fully assembled application in `build/libs`.
+A convenience script exists that assembles the application and packages it up as a Docker container.
+Simply run `./build.sh` to create the new Docker image.  `./tag-and-push.sh` deploys the image
+to the Docker Hub.
 
 # Installation
-The application runs standalone and can be conveniently launched via `./run.sh`.  This will create
-`generated-docker-compose.yml` in the current directory.
+The application runs standalone and can be conveniently launched via `./run.sh`.  This will pull
+down the latest Docker image, run the container, creating`generated-docker-compose.yml` in the
+current directory.
 
 # Tips and Tricks
 
